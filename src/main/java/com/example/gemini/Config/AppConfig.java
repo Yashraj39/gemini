@@ -1,14 +1,14 @@
 package com.example.gemini.Config;
 
-import com.google.genai.Client;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class GeminiConfig {
+public class AppConfig {
 
     @Bean
-    public Client geminiClient() {
-        return new Client();
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

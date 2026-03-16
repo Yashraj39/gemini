@@ -1,14 +1,14 @@
 package com.example.gemini.Config;
 
-import com.google.genai.Client;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class GeminiConfig {
+public class JacksonConfig {
 
     @Bean
-    public Client geminiClient() {
-        return new Client();
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
