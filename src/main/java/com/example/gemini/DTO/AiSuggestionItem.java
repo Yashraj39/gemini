@@ -6,4 +6,5 @@ import lombok.Data;
 public class AiSuggestionItem {
     private String name;
     private String reason;
+    private Integer score;
 }
