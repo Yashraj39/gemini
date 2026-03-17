@@ -118,9 +118,11 @@ public class GeminiService {
                     4. Do not invent new styles.
                     5. First visually analyze visible face balance, forehead impression, jawline impression, face length-vs-width balance, and overall suitability.
                     6. Give natural salon-style reasons, not robotic reasons.
-                    7. Reason must explain why the style suits the person.
-                    8. score must be an integer from 70 to 100.
-                    9. Return only valid JSON.
+                    7. ALWAYS write in second-person tone (use "you" and "your").
+                    8. NEVER use "he", "she", "his", "her", or third-person words.
+                    9. Reason must explain why the style suits the user directly.
+                    10. score must be an integer from 70 to 100.
+                    11. Return only valid JSON.
                     """.formatted(gender, faceSummary, String.join(", ", allowedNames));
 
             Content systemInstruction = Content.fromParts(
@@ -284,11 +286,15 @@ public class GeminiService {
 
             AiSuggestionItem cleanedItem = new AiSuggestionItem();
             cleanedItem.setName(matchedName);
-            cleanedItem.setReason(
-                    item.getReason() == null || item.getReason().isBlank()
-                            ? matchedName + " suits your face balance and overall look."
-                            : item.getReason().trim()
-            );
+            String reason = item.getReason();
+
+            if (reason == null || reason.isBlank()) {
+                reason = matchedName + " suits your face balance and overall look.";
+            } else {
+                reason = convertToSecondPerson(reason);
+            }
+
+            cleanedItem.setReason(reason);
 
             Integer score = item.getScore();
             if (score == null) {
@@ -306,6 +312,26 @@ public class GeminiService {
         }
 
         return cleaned;
+    }
+
+    private String convertToSecondPerson(String text) {
+        if (text == null) return "";
+
+        String result = text;
+
+        result = result.replaceAll("\\bhis\\b", "your");
+        result = result.replaceAll("\\bher\\b", "your");
+        result = result.replaceAll("\\bhe\\b", "you");
+        result = result.replaceAll("\\bshe\\b", "you");
+        result = result.replaceAll("\\bhim\\b", "you");
+
+        // Optional: fix capitalization issues
+        result = result.replaceAll("\\bHis\\b", "Your");
+        result = result.replaceAll("\\bHer\\b", "Your");
+        result = result.replaceAll("\\bHe\\b", "You");
+        result = result.replaceAll("\\bShe\\b", "You");
+
+        return result;
     }
 
     private int heuristicScore(String name, String gender, String faceSummary) {
